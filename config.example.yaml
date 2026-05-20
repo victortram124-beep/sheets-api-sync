@@ -1,0 +1,38 @@
+# ────────────────────────────────────────────────────────────────────────────
+# Sheets ↔ API sync configuration
+#
+# Copy this to config.yaml and edit for your sheet/API pair.
+# Column names on the left (sheet header), API field names on the right.
+# ────────────────────────────────────────────────────────────────────────────
+
+# Cell range to read/write on the Google Sheet. Must include the header row.
+sheet_range: "Customers!A1:E1000"
+
+# REST resource appended to API_BASE_URL.
+#   API_BASE_URL=https://api.example.com/v1
+#   api_resource: customers
+# → operations hit https://api.example.com/v1/customers
+api_resource: "customers"
+
+# Sheet column used as the primary key. Must be unique per row.
+id_column: "customer_id"
+
+# Sync direction:
+#   bidirectional  — pull both sides, push both ways (default, with conflicts)
+#   sheet-to-api   — sheet is the source of truth, push to API only
+#   api-to-sheet   — API is the source of truth, push to sheet only
+direction: "bidirectional"
+
+# How to resolve conflicts when the same row changed on both sides.
+# Valid: last_write_wins | sheet_wins | api_wins | manual
+# Leave unset to fall back to the CONFLICT_STRATEGY env var.
+conflict_strategy: "last_write_wins"
+
+# Column → API-field mapping. Every column you want to sync must be listed.
+# Anything outside this list is ignored (safe to keep helper columns).
+columns:
+  - { sheet: "customer_id",  api: "id" }
+  - { sheet: "name",         api: "full_name" }
+  - { sheet: "email",        api: "email" }
+  - { sheet: "plan",         api: "subscription_tier" }
+  - { sheet: "mrr_usd",      api: "monthly_revenue_cents" }
